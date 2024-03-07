@@ -1,4 +1,5 @@
-package restaurant.coredomain.http.models.dish.requests;
+package restaurant.coredomain.http.models.admin.responses;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,10 +8,9 @@ import lombok.NoArgsConstructor;
 
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
-public class DeleteDishRequest {
-    private String title;
+@NoArgsConstructor
+public class ClientResponse {
     private String email;
-    private String password;
+    private String role;
 }

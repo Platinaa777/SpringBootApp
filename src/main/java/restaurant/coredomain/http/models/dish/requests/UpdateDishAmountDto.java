@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateDishAmountDto {
-    private Long id;
+    private String title;
     private Long amount;
     private String email;
     private String password;

@@ -9,6 +9,10 @@ import restaurant.auth.http.models.responses.AuthResponse;
 import restaurant.auth.models.Client;
 import restaurant.auth.repositories.interfaces.IUserRepository;
 import restaurant.auth.services.models.RegisterUserCommand;
+import restaurant.coredomain.http.models.admin.responses.ClientResponse;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @AllArgsConstructor
@@ -47,5 +51,21 @@ public class AuthService {
 
     public Client findByEmail(String email) {
         return userRepository.find(email);
+    }
+
+    public List<ClientResponse> getAll() {
+        var clients = userRepository.getAll();
+
+        List<ClientResponse> clientResponses = new ArrayList<>();
+        for (var client : clients) {
+            var clientResponse = ClientResponse.builder()
+                    .email(client.getEmail())
+                    .role(client.getRole())
+                    .build();
+
+            clientResponses.add(clientResponse);
+        }
+
+        return clientResponses;
     }
 }

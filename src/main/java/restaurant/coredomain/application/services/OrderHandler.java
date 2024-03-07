@@ -24,7 +24,7 @@ import java.util.List;
 @Service
 @AllArgsConstructor
 @Scope(value = "prototype")
-public class CreateOrderHandler {
+public class OrderHandler {
 
     private final ITransactionRepository transactionRepository;
     private final IOrderRepository orderRepository;
@@ -33,20 +33,8 @@ public class CreateOrderHandler {
     private final SheffService sheffService;
 
     public ResponseType createOrder(CreateOrder order) {
-
-        // check if transaction was not finished
-        var transaction = transactionRepository.find(order.getTransactionId());
-        if (transaction != null && transaction.getStatus().equals(TransactionType.FINISHED))
-            return new ResponseType(ResponseType.ErrorWithTransaction, false);
-
-        // if user did not buy, we will create shopping transaction
         unitOfWork.startTransaction();
-        var transactionId = "";
-        if (transaction == null) {
-            transactionId = transactionRepository.create(order.getClientEmail());
-        } else {
-            transactionId = transaction.getId();
-        }
+        var transactionId = transactionRepository.create(order.getClientEmail());
 
         // was thrown exception
         if (transactionId == null) {
@@ -178,6 +166,9 @@ public class CreateOrderHandler {
 
     public ResponseType pay(String transactionId) {
         var order = orderRepository.findOrder(transactionId);
+
+        if (order == null)
+            return new ResponseType(ResponseType.OrderCantBePaid, false);
 
         if (!order.getFinished_at().before(new Date()))
             return new ResponseType(ResponseType.OrderCantBePaid, false);

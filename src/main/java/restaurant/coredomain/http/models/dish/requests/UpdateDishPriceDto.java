@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UpdateDishPriceDto {
-    private Long id;
+    private String title;
     private Long price;
     private String email;
     private String password;

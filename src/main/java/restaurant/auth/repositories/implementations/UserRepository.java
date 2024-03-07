@@ -11,6 +11,8 @@ import restaurant.infrastructure.interfaces.IDbConnectionFactory;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 @Scope(value = "prototype")
@@ -89,6 +91,37 @@ public class UserRepository implements IUserRepository {
             factory.closeConnection();
 
             return client;
+        } catch (SQLException e) {
+            // e.printStackTrace();
+        }
+        factory.closeConnection();
+        return null;
+    }
+
+    @Override
+    public List<Client> getAll() {
+        var connection = factory.getConnection();
+
+        try {
+            var sqlStatement = connection.prepareStatement("SELECT * FROM clients");
+
+            var result = sqlStatement.executeQuery();
+            List<Client> clients = new ArrayList<>();
+            while (result.next()) {
+                var client = Client.builder()
+                        .id(result.getLong("id"))
+                        .email(result.getString("email"))
+                        .password(result.getString("password"))
+                        .role(result.getString("role"))
+                        .build();
+
+                clients.add(client);
+            }
+
+
+            factory.closeConnection();
+
+            return clients;
         } catch (SQLException e) {
             // e.printStackTrace();
         }

@@ -15,7 +15,6 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateOrderRequest {
     List<TitleAmountPair> dishes;
-    private String transactionId;
     private String clientEmail;
     private String password;
 }

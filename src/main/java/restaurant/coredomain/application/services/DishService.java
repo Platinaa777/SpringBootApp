@@ -44,7 +44,7 @@ public class DishService {
     }
 
     public Dish updateAmount(UpdateDishAmountDto dish) {
-        var existingDish = dishRepository.findById(dish.getId());
+        var existingDish = dishRepository.findByTitle(dish.getTitle());
 
         if (existingDish == null)
             return null;
@@ -54,28 +54,28 @@ public class DishService {
     }
 
     public Dish updatePrice(UpdateDishPriceDto dish) {
-        var existingDish = dishRepository.findById(dish.getId());
+        var existingDish = dishRepository.findByTitle(dish.getTitle());
 
         if (existingDish == null)
             return null;
 
-        existingDish.setAmount(dish.getPrice());
+        existingDish.setPrice(dish.getPrice());
         return dishRepository.update(existingDish);
     }
 
     public Dish updateDuration(UpdateDishDurationDto dish) {
-        var existingDish = dishRepository.findById(dish.getId());
+        var existingDish = dishRepository.findByTitle(dish.getTitle());
 
         if (existingDish == null)
             return null;
 
-        existingDish.setAmount(dish.getDuration());
+        existingDish.setDurationSeconds(dish.getDuration());
         return dishRepository.update(existingDish);
     }
 
 
-    public boolean delete(Long id) {
-        var existingDish = dishRepository.findById(id);
+    public boolean delete(String title) {
+        var existingDish = dishRepository.findByTitle(title);
 
         if (existingDish == null)
             return false;

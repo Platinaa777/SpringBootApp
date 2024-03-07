@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import restaurant.auth.http.models.request.AdminRegisterRequest;
 import restaurant.auth.http.models.request.LoginRequest;
 import restaurant.auth.http.models.request.RegisterRequest;
@@ -17,6 +18,7 @@ import restaurant.auth.services.models.RegisterUserCommand;
 
 import java.util.Objects;
 
+@RestController
 @Controller()
 @RequestMapping("/auth")
 @Scope(value = "prototype")

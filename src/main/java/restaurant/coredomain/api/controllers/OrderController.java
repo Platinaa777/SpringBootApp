@@ -10,30 +10,26 @@ import restaurant.auth.services.AuthService;
 import restaurant.coredomain.application.commands.order.AppendDishOrder;
 import restaurant.coredomain.application.commands.order.CreateOrder;
 import restaurant.coredomain.application.responses.status.OrderStatusResponse;
-import restaurant.coredomain.application.services.CreateOrderHandler;
+import restaurant.coredomain.application.services.OrderHandler;
 import restaurant.coredomain.http.models.order.requests.CreateOrderRequest;
 import restaurant.coredomain.http.models.order.requests.RemoveOrderRequest;
 import restaurant.coredomain.http.models.order.requests.UpdateOrderRequest;
-
+@RestController
 @Controller
 @RequestMapping("/order")
 @Scope(value = "prototype")
 public class OrderController {
 
-    private final CreateOrderHandler createOrderHandler;
+    private final OrderHandler orderHandler;
     private final AuthService authService;
 
-    public OrderController(CreateOrderHandler createOrderHandler, AuthService authService) {
-        this.createOrderHandler = createOrderHandler;
+    public OrderController(OrderHandler orderHandler, AuthService authService) {
+        this.orderHandler = orderHandler;
         this.authService = authService;
     }
 
     @PostMapping
     public ResponseEntity<String> createOrder(@RequestBody CreateOrderRequest createOrderRequest) {
-        if (createOrderRequest.getTransactionId().isEmpty()) {
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
-
         var authResponse = authService.login(new LoginRequest(
                 createOrderRequest.getClientEmail(),
                 createOrderRequest.getPassword()));
@@ -42,10 +38,9 @@ public class OrderController {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
 
-        var response = createOrderHandler.createOrder(CreateOrder.builder()
+        var response = orderHandler.createOrder(CreateOrder.builder()
                 .clientEmail(createOrderRequest.getClientEmail())
                 .dishes(createOrderRequest.getDishes())
-                .transactionId(createOrderRequest.getTransactionId())
                 .build());
 
         if (!response.isSuccess) {
@@ -63,7 +58,7 @@ public class OrderController {
         if (authResponse == null || !authResponse.isAuthenticated())
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
-        var response = createOrderHandler.cancelOrder(req.getTransactionId());
+        var response = orderHandler.cancelOrder(req.getTransactionId());
 
         if (response) {
             return new ResponseEntity<>("OK! Order was removed", HttpStatus.OK);
@@ -81,7 +76,7 @@ public class OrderController {
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
 
-        var response = createOrderHandler.appendDishToOrder(AppendDishOrder.builder()
+        var response = orderHandler.appendDishToOrder(AppendDishOrder.builder()
                 .title(req.getTitle())
                 .amount(req.getAmount())
                 .email(req.getEmail())
@@ -96,7 +91,7 @@ public class OrderController {
 
     @GetMapping("/{transactionId}")
     public ResponseEntity<OrderStatusResponse> getInfoAboutOrder(@PathVariable String transactionId) {
-        var response = createOrderHandler.findOrder(transactionId);
+        var response = orderHandler.findOrder(transactionId);
 
         if (response == null)
             return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
@@ -106,7 +101,7 @@ public class OrderController {
 
     @PostMapping("/pay/{transactionId}")
     public ResponseEntity payOrder(@PathVariable String transactionId) {
-        var response = createOrderHandler.pay(transactionId);
+        var response = orderHandler.pay(transactionId);
 
         if (!response.isSuccess) {
             return new ResponseEntity<>(String.join("\n", response.messages), HttpStatus.BAD_REQUEST);

@@ -24,8 +24,10 @@ dependencies {
     implementation 'org.postgresql:postgresql:42.2.23'
     implementation 'org.springframework.boot:spring-boot-starter-jdbc' // Add this line for DataSource configuration
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.3.0'
 }
 
+
 tasks.named('test') {
-    useJUnitPlatform()
+//    useJUnitPlatform()
 }

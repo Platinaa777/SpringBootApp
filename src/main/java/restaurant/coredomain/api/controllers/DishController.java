@@ -17,7 +17,7 @@ import restaurant.coredomain.http.models.dish.responses.PutDishResponse;
 
 import java.util.List;
 
-
+@RestController
 @Controller
 @Scope(value = "prototype")
 @RequestMapping("/dish")
@@ -61,7 +61,7 @@ public class DishController {
         if (!responseAuth.isAuthenticated() || !responseAuth.isAdmin())
             return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
-        var result = dishService.delete(req.getId());
+        var result = dishService.delete(req.getTitle());
 
         if (result)
             return new ResponseEntity<>("Successfully deleted", HttpStatus.OK);
